@@ -80,7 +80,7 @@
     }
     .breadcrumb-inline .sep {
       margin: 0 6px;
-      color: var(--border-color);
+      color: var(--label-color);
     }
     .breadcrumb-inline .current {
       color: var(--title-color);
@@ -1847,16 +1847,16 @@
     const breadcrumbs = document.getElementById('directory-breadcrumbs');
     const fileTable = document.getElementById('file-table');
 
-    let breadcrumbContent = '<span class="sep">/</span>';
+    let breadcrumbContent = '';
     if (currentPath === '/') {
-      breadcrumbContent += '<span class="current">🏠</span>';
+      breadcrumbContent += '<span class="current">🏠 Home</span>';
     } else {
-      breadcrumbContent += '<a href="/files">🏠</a>';
+      breadcrumbContent += '<a href="/files">🏠 Home</a>';
       const pathSegments = currentPath.split('/');
       pathSegments.slice(1, pathSegments.length - 1).forEach(function(segment, index) {
-        breadcrumbContent += '<span class="sep">/</span><a href="/files?path=' + encodeURIComponent(pathSegments.slice(0, index + 2).join('/')) + '">' + escapeHtml(segment) + '</a>';
+        breadcrumbContent += '<span class="sep">›</span><a href="/files?path=' + encodeURIComponent(pathSegments.slice(0, index + 2).join('/')) + '">' + escapeHtml(segment) + '</a>';
       });
-      breadcrumbContent += '<span class="sep">/</span>';
+      breadcrumbContent += '<span class="sep">›</span>';
       breadcrumbContent += '<span class="current">' + escapeHtml(pathSegments[pathSegments.length - 1]) + '</span>';
     }
     breadcrumbs.innerHTML = breadcrumbContent;
