@@ -256,6 +256,13 @@ void EpubReaderActivity::loop() {
     }
   }
 
+  // Mark the book completed on the first frame the end-of-book screen is shown.
+  // Completion is permanent — paging back does not unmark it.
+  if (atEndOfBook && !completedMarked) {
+    RECENT_BOOKS.markCompleted(epub->getPath());
+    completedMarked = true;
+  }
+
   // Arm the move here so ANY exit path (Back, Home, file browser) relocates the book into
   // /Read/ in onExit(); paging back off the end screen disarms it (book not actually
   // finished). If removeReadBooksFromRecents also fired, RecentBooksStore::updatePath in the

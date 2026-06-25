@@ -41,6 +41,8 @@ class EpubReaderActivity final : public Activity {
   // Tracks whether this book is currently removed from Recent Books by the
   // removeReadBooksFromRecents feature (set at End-of-Book, cleared if paged back in).
   bool recentsEntryRemoved = false;
+  // Set once when the reader first reaches end-of-book; never cleared (completion is permanent).
+  bool completedMarked = false;
   unsigned long bookmarkMessageTime = 0UL;
   // Set when the reader is left at end-of-book and SETTINGS.moveFinishedToReadFolder is on.
   // Consumed in onExit() to relocate the finished book into /Read/.

@@ -7,6 +7,7 @@ struct RecentBook {
   std::string title;
   std::string author;
   std::string coverBmpPath;
+  bool isCompleted = false;
 
   bool operator==(const RecentBook& other) const { return path == other.path; }
 };
@@ -54,6 +55,9 @@ class RecentBooksStore {
   // Remove entries whose backing file is no longer on the SD card.
   // Returns true if any entry was removed. Does not persist — caller decides.
   bool pruneMissing();
+
+  // Mark the entry with the given path as completed. No-op if no entry matches.
+  void markCompleted(const std::string& path);
 
   // Get the list of recent books (most recent first)
   const std::vector<RecentBook>& getBooks() const { return recentBooks; }

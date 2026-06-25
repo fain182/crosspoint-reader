@@ -26,15 +26,17 @@ void RecentBooksStore::addBook(const std::string& path, const std::string& title
   // Drop stale entries first so a new add can't evict a valid book in their stead.
   pruneMissing();
 
-  // Remove existing entry if present
+  // Remove existing entry if present, preserving its isCompleted state
+  bool wasCompleted = false;
   auto it =
       std::find_if(recentBooks.begin(), recentBooks.end(), [&](const RecentBook& book) { return book.path == path; });
   if (it != recentBooks.end()) {
+    wasCompleted = it->isCompleted;
     recentBooks.erase(it);
   }
 
   // Add to front
-  recentBooks.insert(recentBooks.begin(), {path, title, author, coverBmpPath});
+  recentBooks.insert(recentBooks.begin(), {path, title, author, coverBmpPath, wasCompleted});
 
   // Trim to max size
   if (recentBooks.size() > MAX_RECENT_BOOKS) {
@@ -90,6 +92,14 @@ bool RecentBooksStore::pruneMissing() {
   const size_t before = recentBooks.size();
   recentBooks.erase(std::remove_if(recentBooks.begin(), recentBooks.end(), &isMissing), recentBooks.end());
   return recentBooks.size() != before;
+}
+
+void RecentBooksStore::markCompleted(const std::string& path) {
+  auto it =
+      std::find_if(recentBooks.begin(), recentBooks.end(), [&](const RecentBook& book) { return book.path == path; });
+  if (it == recentBooks.end() || it->isCompleted) return;
+  it->isCompleted = true;
+  saveToFile();
 }
 
 bool RecentBooksStore::saveToFile() const {
