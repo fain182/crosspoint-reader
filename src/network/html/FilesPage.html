@@ -2038,7 +2038,7 @@
           const fileIsImage = isImageFile(file.name);
           fileTableContent += `<td><span class="file-icon">${file.isEpub ? '📗' : (fileIsImage ? '🖼️' : '📄')}</span>`;
           if (fileIsImage) {
-            fileTableContent += `<a href="#" onclick="openImagePreview('${filePath.replaceAll("'", "\\'")}', '${file.name.replaceAll("'", "\\'")}'); return false;" class="file-link">${escapeHtml(file.name)}</a>`;
+            fileTableContent += `<a href="${downloadUrl(filePath)}" class="file-link image-preview-link">${escapeHtml(file.name)}</a>`;
           } else {
             fileTableContent += `<a rel="noopener noreferrer" target="_blank" href="${downloadUrl(filePath)}" class="file-link">${escapeHtml(file.name)}</a>`;
           }
@@ -2068,8 +2068,7 @@
     return `/download?path=${encodeURIComponent(filePath)}`;
   }
 
-  function openImagePreview(filePath, name) {
-    const url = downloadUrl(filePath);
+  function openImagePreview(url, name) {
     const img = document.getElementById('imagePreviewImg');
     document.getElementById('imagePreviewName').textContent = name;
     img.src = url;
@@ -2958,6 +2957,14 @@
 
   // Initialize quality settings handlers
   document.addEventListener('DOMContentLoaded', function() {
+    // Delegated so it survives file-table re-renders (avoids inline onclick with untrusted names).
+    document.getElementById('file-table').addEventListener('click', function(e) {
+      const link = e.target.closest('.image-preview-link');
+      if (!link) return;
+      e.preventDefault();
+      openImagePreview(link.getAttribute('href'), link.textContent);
+    });
+
     const qualitySlider = document.getElementById('qualitySlider');
     const qualityInput = document.getElementById('qualityInput');
 
